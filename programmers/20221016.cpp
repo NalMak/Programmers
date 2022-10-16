@@ -1,62 +1,72 @@
 #include <iostream>
-#include <string>
 #include <vector>
-#include <algorithm>
-
 using namespace std;
 
-void GetStringElement(vector<string>& outStvElement, const string& strInput, const char* baseChar)
+int GetTornermentCount(int n)
 {
-	string _strInput = strInput;
+	int TornermentIdx = 0;
 	while (true)
 	{
-		size_t baseIdx = _strInput.find(baseChar);
+		n = n / 2;
+		++TornermentIdx;
 
-		if (baseIdx == -1)
-		{
-			outStvElement.emplace_back(_strInput);
+		if (n <= 1)
 			break;
+	}
+	return TornermentIdx;
+}
+
+void GetTornermentIdxList(vector<int>& outTornermentList, int totalTornermentIdx, int curTornermentIdx)
+{
+	outTornermentList.clear();
+
+	for (int i = 0; i < totalTornermentIdx; ++i)
+	{
+		if (curTornermentIdx <= 1)
+		{
+			outTornermentList.emplace_back(curTornermentIdx);
+			continue;
 		}
 
-		outStvElement.emplace_back(_strInput.substr(0, baseIdx));
-		_strInput.erase(0, baseIdx + 1);
+		if (curTornermentIdx % 2 == 0)
+		{
+			curTornermentIdx = curTornermentIdx / 2;
+		}
+		else
+		{
+			curTornermentIdx = curTornermentIdx / 2 + 1;
+		}
+
+		outTornermentList.emplace_back(curTornermentIdx);
 	}
 }
-int StringToInt(const string& s)
+
+int solution(int n, int a, int b)
 {
-	return stoi(s.c_str());
-}
+	int answer = 0;
 
-string solution(string s) {
+	int tornermentIdx = GetTornermentCount(n);
 
-	vector<string> stvResult;
+	vector<int> userA_tornermentList;
+	vector<int> userB_tornermentList;
 
-	typedef int ELEMENT_NUM;
-	typedef int ELEMENT_INDEX;
-	vector<pair<ELEMENT_NUM, ELEMENT_INDEX>> stvIntResult;
+	GetTornermentIdxList(userA_tornermentList, tornermentIdx, a);
+	GetTornermentIdxList(userB_tornermentList, tornermentIdx, b);
 
-	GetStringElement(stvResult, s, " ");
-
-	int index = 0;
-	for (const auto& strResult : stvResult)
+	for (int i = 0; i < userA_tornermentList.size(); ++i)
 	{
-		stvIntResult.emplace_back(pair<ELEMENT_NUM, ELEMENT_INDEX>(StringToInt(strResult),index));
-		++index;
+		if (userA_tornermentList[i] == userB_tornermentList[i])
+		{
+			return i + 1;
+		}
 	}
 
-	sort(stvIntResult.begin(), stvIntResult.end());
-	
-	string answer = "";
-	answer += stvResult[stvIntResult.front().second];
-	answer += " ";
-	answer += stvResult[stvIntResult.back().second];
-
-	return answer;
+	return 0;
 }
+
 
 
 void main()
 {
-	string s = "-1 -4";
-	solution(s);
+	solution(8, 4, 7);
 }
