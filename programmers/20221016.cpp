@@ -66,7 +66,7 @@ int solution(int n, int a, int b)
 
 
 
-void main()
-{
-	solution(8, 4, 7);
-}
+//void main()
+//{
+//	solution(8, 4, 7);
+//}
