@@ -32,9 +32,8 @@ vector<int> solution(vector<string> id_list, vector<string> report, int k) {
 	vector<int> answer;
 	answer.assign(id_list.size(),0);
 
-	map<string,UserReport*> userReports;
+	map<string,UserReport> userReports;
 	map<string, int> cacheUserData;
-	vector<int> userIndexs;
 
 	int index = 0;
 	for (const auto& id : id_list)
@@ -43,30 +42,25 @@ vector<int> solution(vector<string> id_list, vector<string> report, int k) {
 		++index;
 	}
 
+	for (const auto& reportInfo : report)
+	{
+		string reportTo;
+		string reportFrom;
+
+		GetReportDetail(reportInfo, reportTo, reportFrom);
+
+		userReports[reportFrom].stmReported[reportTo] += 1;
+	}
+	
+
 	typedef int ReportSuccessCount;
 	map<ReportUserID, ReportSuccessCount> userReportSuccess;
 
-	for (const auto& reportInfo : report)
-	{
-		string reportIn;
-		string reportOut;
-
-		GetReportDetail(reportInfo, reportOut, reportIn);
-
-		UserReport* pReport = userReports[reportIn];
-		if (pReport == nullptr)
-		{
-			pReport = new UserReport;
-			userReports[reportIn] = pReport;
-		}
-		pReport->stmReported[reportOut] += 1;
-	}
-	
 	for (const auto& userReport : userReports)
 	{
-		if (IsReported(userReport.second->stmReported.size(), k))
+		if (IsReported(userReport.second.stmReported.size(), k))
 		{
-			for (const auto& reporter : userReport.second->stmReported)
+			for (const auto& reporter : userReport.second.stmReported)
 			{
 				userReportSuccess[reporter.first] += 1;
 			}
@@ -78,10 +72,6 @@ vector<int> solution(vector<string> id_list, vector<string> report, int k) {
 		answer[cacheUserData[success.first]] = success.second;
 	}
 
-	for (auto& userReport : userReports)
-	{
-		delete userReport.second;
-	}
 	return answer;
 }
 
