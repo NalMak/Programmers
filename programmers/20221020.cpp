@@ -17,6 +17,12 @@ void GetReportDetail(const string& reportInfo, string& reportIn, string& reportO
 	reportOut = reportInfo.substr(spaceIdx + 1, reportInfo.size());
 
 }
+
+bool IsReported(int reportedNum, int conditionNum)
+{
+	return reportedNum >= conditionNum;
+}
+
 vector<int> solution(vector<string> id_list, vector<string> report, int k) {
 
 	vector<int> answer;
@@ -48,14 +54,14 @@ vector<int> solution(vector<string> id_list, vector<string> report, int k) {
 			pReport = new UserReport;
 			userReports[reportIn] = pReport;
 		}
-		pReport->stmReported[reportOut] = 1;
+		pReport->stmReported[reportOut] += 1;
 	}
 	
 	for (const auto& userReport : userReports)
 	{
-		if (userReport.second->stmReported.size() >= k)
+		if (IsReported(userReport.second->stmReported.size(), k))
 		{
-			for(const auto& reporter : userReport.second->stmReported)
+			for (const auto& reporter : userReport.second->stmReported)
 			{
 				userReportSuccess[reporter.first]++;
 			}
@@ -67,6 +73,10 @@ vector<int> solution(vector<string> id_list, vector<string> report, int k) {
 		answer[cacheUserData[success.first]] = success.second;
 	}
 
+	for (auto& userReport : userReports)
+	{
+		delete userReport.second;
+	}
 	return answer;
 }
 
