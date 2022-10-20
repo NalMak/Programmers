@@ -4,9 +4,13 @@
 
 using namespace std;
 
+typedef string ReportUserID;
+
 struct UserReport
 {
-	map<string,int> stmReported;
+	typedef int ReportedCount;
+
+	map<ReportUserID, ReportedCount> stmReported;
 };
 
 void GetReportDetail(const string& reportInfo, string& reportIn, string& reportOut)
@@ -15,7 +19,6 @@ void GetReportDetail(const string& reportInfo, string& reportIn, string& reportO
 
 	reportIn = reportInfo.substr(0, spaceIdx);
 	reportOut = reportInfo.substr(spaceIdx + 1, reportInfo.size());
-
 }
 
 bool IsReported(int reportedNum, int conditionNum)
@@ -25,21 +28,23 @@ bool IsReported(int reportedNum, int conditionNum)
 
 vector<int> solution(vector<string> id_list, vector<string> report, int k) {
 
+
 	vector<int> answer;
+	answer.assign(id_list.size(),0);
 
 	map<string,UserReport*> userReports;
 	map<string, int> cacheUserData;
 	vector<int> userIndexs;
-	int index = 0;
 
+	int index = 0;
 	for (const auto& id : id_list)
 	{
 		cacheUserData[id] = index;
 		++index;
 	}
 
-	map<string, int> userReportSuccess;
-	answer.assign(id_list.size(),0);
+	typedef int ReportSuccessCount;
+	map<ReportUserID, ReportSuccessCount> userReportSuccess;
 
 	for (const auto& reportInfo : report)
 	{
@@ -63,7 +68,7 @@ vector<int> solution(vector<string> id_list, vector<string> report, int k) {
 		{
 			for (const auto& reporter : userReport.second->stmReported)
 			{
-				userReportSuccess[reporter.first]++;
+				userReportSuccess[reporter.first] += 1;
 			}
 		}
 	}
